@@ -17,6 +17,14 @@ def ready():
             print('Your anwers must be Y (Yes) on N (No), please try again.')    
     return True if do_players_game == 'Y' else False
 
+def continue_playing():
+    continue_game = ''
+    while continue_game not in ['Y', 'N']:
+        continue_game = input('Do you want to play again (Y/N)?: ')
+        if continue_game not in ['Y', 'N']:
+            print('Your anwers must be Y (Yes) on N (No), please try again.')
+    return True if continue_game == 'Y' else False
+
 table_game_rows = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 row_separators = '-----------'
 
@@ -31,7 +39,7 @@ def print_panel():
 
 def check_game_status(position_played, player):
     print('position_played: ',position_played)
-    print('player: ', player)
+    print('player: ', players[player])
     if (position_played == 1 and table_game_rows[1] == players[player] and table_game_rows[2] == players[player]):
         return True
     if (position_played == 1 and table_game_rows[4] == players[player] and table_game_rows[8] == players[player]):
@@ -80,15 +88,16 @@ def check_game_status(position_played, player):
         return True
     return False
 
+print('\n'*100) # clear screen
 players = choose_players()
 are_ready = ready()
-
 player = 0
 next_position = 0
+
 if are_ready:
+    print('\n'*100) # clear screen
     print(print_panel())
     acceptable_values = range(1,10)
-    is_it_a_winner = False
     total_cells_filled =  0
     is_there_a_winner = False
     while total_cells_filled < 9 and is_there_a_winner == False:
@@ -100,21 +109,25 @@ if are_ready:
                 if table_game_rows[int(next_position) - 1] == ' ':
                     table_game_rows[int(next_position) - 1] = players[player]
                     total_cells_filled = total_cells_filled + 1
+                    print('\n'*100) # clear screen
                     is_there_a_winner = check_game_status(int(next_position), player)
                     print('is_there_a_winner: ', is_there_a_winner)
+                    print(print_panel())
                     if (is_there_a_winner == False):
                         player = 0 if player == 1 else 1
                     else:
                         print('The winner is player: ', players[player])
+                        if (continue_playing() == True):
+                            total_cells_filled =  0
+                            is_there_a_winner = False
+                            table_game_rows = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+                            print('\n'*100) # clear screen
+                            print(print_panel())
                 else:
                     print('Your position must be a FREE CELL between 1 and 9, please try again.')
             else:
                 print('Your position must be a free cell between 1 and 9, please try again.')
-        print('position selected: ', next_position)
-        print(print_panel())
     if (total_cells_filled > 8 and is_there_a_winner == False):
         print('The game ended in a tie.')
 else:
     print('You left the game, come back when ready!!')
-
-
